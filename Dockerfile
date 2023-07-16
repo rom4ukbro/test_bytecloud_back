@@ -1,6 +1,6 @@
 FROM node:18.15.0
 
-WORKDIR /testbytecloud
+WORKDIR /test_bytecloud_backend
 
 COPY "package.json" . 
 
