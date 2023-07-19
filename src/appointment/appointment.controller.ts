@@ -14,6 +14,7 @@ import { CreateAppointmentDto } from 'src/appointment/dto/create-appointment.dto
 
 import { AppointmentService } from './appointment.service';
 import { CreateAppointmentBulkResponseDto } from './dto/create-bulk.res.dto';
+import { GetAppointmentsResponseDto } from './dto/get-appointments.res.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 
 @ApiTags('Appointments')
@@ -36,7 +37,7 @@ export class AppointmentController {
   }
 
   @Get()
-  async getAppointments() {
+  async getAppointments(): Promise<GetAppointmentsResponseDto> {
     const appointments = await this.service.getAll();
     const optimizeAppointments = this.service.getOptimize(appointments);
 

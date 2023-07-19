@@ -4,6 +4,8 @@ import { CreateBulkDto } from 'src/common/dto/create-bulk.dto';
 import { DoctorsService } from 'src/doctors/doctors.service';
 import { PatientsService } from 'src/patients/patients.service';
 
+import { GetAppointmentsResponseDto } from './appointment/dto/get-appointments.res.dto';
+
 @Injectable()
 export class AppService {
   constructor(
@@ -33,6 +35,17 @@ export class AppService {
       appointments: appointmentsCount,
       doctors: doctorsCount,
       patients: patientsCount,
+    };
+  }
+
+  async getAppointments(): Promise<GetAppointmentsResponseDto> {
+    const appointments = await this.appointmentsService.getAll();
+    const optimizeAppointments =
+      this.appointmentsService.getOptimize(appointments);
+
+    return {
+      appointments,
+      optimizeAppointments,
     };
   }
 }

@@ -6,6 +6,7 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { AppService } from './app.service';
@@ -16,13 +17,21 @@ import { CreateBulkResponseDto } from './common/dto/create-bulk.res.dto';
 @Controller()
 @UseInterceptors(ClassSerializerInterceptor)
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   @Post('bulk')
   async createBulk(
     @Body() body: CreateBulkDto,
   ): Promise<CreateBulkResponseDto> {
-    return this.appService.createBulk(body);
+    const res = await this.appService.createBulk(body);
+
+    const appointments = await this.appService.getAppointments();
+    this.eventEmitter.emit('appointments.send', appointments);
+
+    return res;
   }
 
   @Delete('clear')
@@ -36,6 +45,13 @@ export class AppController {
     },
   })
   async clear() {
-    return this.appService.clear();
+    const res = await this.appService.clear();
+
+    this.eventEmitter.emit('appointments.send', {
+      appointments: [],
+      optimizeAppointments: [],
+    });
+
+    return res;
   }
 }

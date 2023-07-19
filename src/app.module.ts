@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AppController } from './app.controller';
@@ -9,6 +10,7 @@ import { AppointmentModule } from './appointment/appointment.module';
 import { LogExceptionFilter } from './common/logger.exception-filter';
 import { DoctorsModule } from './doctors/doctors.module';
 import { PatientsModule } from './patients/patients.module';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
@@ -23,9 +25,14 @@ import { PatientsModule } from './patients/patients.module';
       }),
       inject: [ConfigService],
     }),
+    EventEmitterModule.forRoot({
+      wildcard: true,
+      delimiter: '.',
+    }),
     AppointmentModule,
     PatientsModule,
     DoctorsModule,
+    SocketModule,
   ],
   controllers: [AppController],
   providers: [
